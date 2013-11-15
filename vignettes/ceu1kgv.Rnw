@@ -1,0 +1,116 @@
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+
+%\VignetteIndexEntry{ceu1kgv -- genotype plus expression for HapMap CEU}
+%\VignetteDepends{GGBase}
+%\VignetteKeywords{genetics, expression}
+%\VignettePackage{ceu1kgv}
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,pstricks}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+
+\bibliographystyle{plainnat} 
+ 
+\begin{document}
+%\setkeys{Gin}{width=0.55\textwidth}
+
+\title{Building ceu1kgv}
+\author{VJ Carey}
+\maketitle
+
+\section{Introduction}
+
+The collection of 1KG genotype calls and expression data
+for CEU HapMap lines is a complicated process.  Channing 
+has worked with various images of the CEU data, obtained before
+central distribution at ArrayExpress.  Here we document clearly
+how to combine ArrayExpress data with VCF on 1KG.
+
+\section{Expression data}
+
+Briefly, the ArrayExpress E-MTAB-198.processed.1.zip file includes two
+matrices of normalized expression values, one with 60 samples, one
+with 109.  The latter is converted to a matrix and the probe IDs are
+converted to nuIDs using lumiHumanIDMapping package.
+
+It is regrettable that the ArrayExpress function fails (as of 11/15/13)
+to work with a request for this E-MTAB resource.
+
+\section{Genotype data}
+
+We use VCF representations of genotype calls
+as found in such 1000 genome resources as
+\begin{verbatim}
+ALL.chr22.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz
+ALL.chr22.phase1_release_v3.20101123.snps_indels_svs.genotypes.vcf.gz.tbi
+\end{verbatim}
+
+Code that imports the genotype information and converts to a
+\textit{snpStats} \texttt{SnpMatrix} instance is
+<<lkd>>=
+dochrGr = function(chrn, ids, which, genome="hg19",
+ path2vcf = "/proj/rerefs/reref00/1000Genomes_Phase1_v3/ALL/") {
+Require(VariantAnnotation)
+Require(snpStats)
+ allvc = dir(path2vcf, patt="ALL.*gz$",
+  full=TRUE)
+ f_ind = grep(paste0(chrn, "\\."), allvc)
+ cpath = allvc[f_ind]
+ stopifnot(file.exists(cpath))
+ stopifnot(length(cpath)==1)
+ vp = ScanVcfParam( info=NA, geno="GT", fixed="ALT", samples=ids,
+        which=which )
+ tmp = readVcf( cpath, genome=genome, param=vp )
+ sz = prod(dim(tmp))
+ if (sz == 0) return(NULL)
+ genotypeToSnpMatrix(tmp)$genotypes
+}
+@
+
+The chromosome-specific \texttt{SnpMatrix} indices are stored in \text{inst/parts} of
+the source image of this package.
+
+\section{Integrative data container}
+
+We use \textit{GGBase} \texttt{getSS} to combine expression and genotype data
+in a compact format.
+
+<<get22>>=
+c22 = getSS("ceu1kgv", "chr22")
+c22
+@
+
+\section{Session information}
+<<lksess>>=
+sessionInfo()
+@
+
+
+\end{document}
