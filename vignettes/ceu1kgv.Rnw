@@ -103,6 +103,7 @@ We use \textit{GGBase} \texttt{getSS} to combine expression and genotype data
 in a compact format.
 
 <<get22>>=
+library(GGBase)
 c22 = getSS("ceu1kgv", "chr22")
 c22
 @
