@@ -26,7 +26,7 @@ VJ Carey <stvjc@channing.harvard.edu>
 
 Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 
-Expression data from ArrayExpress E-MTAB-264.  
+Expression data from ArrayExpress E-MTAB-198.  
 }
 \references{
 PMID 22532805
