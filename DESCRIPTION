@@ -1,6 +1,6 @@
 Package: ceu1kgv
 Title: expression + genotype on 79 unrelated CEU individuals
-Version: 0.24.0
+Version: 0.25.0
 Author: VJ Carey <stvjc@channing.harvard.edu>
 Description: expression + genotype on 79 unrelated CEU individuals
 Depends: R (>= 3.0), GGBase
