@@ -12,7 +12,6 @@
 \documentclass[12pt]{article}
 
 \usepackage{amsmath,pstricks}
-\usepackage{auto-pst-pdf}
 \usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
 
